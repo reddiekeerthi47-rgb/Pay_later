@@ -1,6 +1,23 @@
 .env
 CODE_REVIEW_REPORT.md
 
+__pycache__
+
+.venv
+
+venv
+
+/Database/__pycache__
+
+/Models/__pycache__
+
+/Routes/__pycache__
+
+/Services/__pycache__
+
+
+*.pyc
+*.pyo
 
 
 
