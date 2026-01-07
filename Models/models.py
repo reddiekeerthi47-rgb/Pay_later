@@ -21,6 +21,7 @@ class MERCHANT(Base):
     merchant_id=Column(Integer,primary_key=True,autoincrement=True)
     merchant_name=Column(VARCHAR(100))
     email=Column(VARCHAR(100))
+    password=Column(String(100),unique=True)
     phone=Column(VARCHAR(15),unique=True)
     fee_percentage=Column(Float,nullable=False)
     created_at=Column(DateTime,default=datetime.utcnow)

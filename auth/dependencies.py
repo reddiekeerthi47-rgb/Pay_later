@@ -20,7 +20,7 @@ def get_current_customer(
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
     # Authentication
-    customer_id = payload.get("customer_id")
+    customer_id = payload.get("_id")
     role = payload.get("role")
 
     # Authorization
@@ -28,3 +28,24 @@ def get_current_customer(
         raise HTTPException(status_code=403, detail="Customer access only")
 
     return customer_id
+
+def get_current_merchant(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    token = credentials.credentials
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    # Authentication
+    merchant_id = payload.get("_id")
+    role = payload.get("role")
+
+    # Authorization
+    if role != "merchant":
+        raise HTTPException(status_code=403, detail="merchant access only")
+
+    return merchant_id
+

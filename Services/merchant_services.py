@@ -1,11 +1,13 @@
 from sqlalchemy.orm import Session
 from Models.models import MERCHANT
+from auth.auth_services import hash_password
 
 def create_merchant_service(
     db: Session,
     merchant_name: str,
     email: str,
     phone: str,
+    password:str,
     fee_percentage: float
 ):
     # 1️⃣ Check if merchant already exists (by name or phone)
@@ -21,6 +23,7 @@ def create_merchant_service(
     new_merchant = MERCHANT(
         merchant_name=merchant_name,
         email=email,
+        password=hash_password(password),
         phone=phone,
         fee_percentage=fee_percentage
     )

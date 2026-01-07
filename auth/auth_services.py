@@ -4,8 +4,9 @@ from sqlalchemy.orm import Session
 import bcrypt  #to hash the passwords
 
 from Database.database import SessionMaker  
-from Models.models import CUSTOMER
+from Models.models import CUSTOMER,MERCHANT
 from auth.jwt_service import create_access_token
+
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -34,17 +35,28 @@ def verify_password(password: str, hashed_password: str) -> bool:
 
 @router.post("/login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
-    customer = db.query(CUSTOMER).filter(
-        CUSTOMER.email == data.email
-    ).first()
+    flag=False
+    customer = db.query(CUSTOMER).filter(CUSTOMER.email == data.email).first()
 
-    if not customer:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    if not verify_password(data.password, customer.password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    access_token = create_access_token(customer._id)
+    if customer:
+        flag=True
+    else:
+        merchant=db.query(MERCHANT).filter(MERCHANT.email == data.email).first()
+        if merchant:
+            flag=True
+    if not flag:
+        raise HTTPException(status_code=403, detail="Invalid credentials")
+    if customer:
+        if not verify_password(data.password, customer.password):
+            raise HTTPException(status_code=401, detail="Invalid credentials")        
+        
+        access_token = create_access_token(customer._id,"customer")
+    else:
+        if not verify_password(data.password, merchant.password):
+            raise HTTPException(status_code=401, detail="Invalid credentials")        
+        
+        access_token = create_access_token(merchant.merchant_id,"merchant")
+            
 
     return {
         "access_token": access_token,

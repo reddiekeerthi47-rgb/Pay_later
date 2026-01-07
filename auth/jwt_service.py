@@ -7,12 +7,13 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
-def create_access_token(customer_id: int):
+def create_access_token(_id: int,role:str):
     payload = {
-        "customer_id": customer_id,   # authentication
-        "role": "customer",           # authorization
+        "_id":_id,   # authentication
+        "role":role,           # authorization
         "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     }
 
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
     return token
+
